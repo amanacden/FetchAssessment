@@ -1,0 +1,90 @@
+CLOSED-ENDED QUESTIONS
+
+#1 What are the top 5 brands by receipts scanned among users 21 and over?
+
+select p.brand, count(distinct receipt_id) receipts_scanned
+from transaction  t 
+  left join users u on t.user_id=u.id
+  left join products p on t.barcode = p.barcode
+where u.BIRTH_DATE IS NOT NULL
+	and (DATEDIFF(CURRENT_DATE,u.BIRTH_DATE)/365)>=21
+group by p.brand
+order by receipts_scanned desc
+limit 5
+
+#2 What are the top 5 brands by sales among users that have had their account for at least six months?
+
+select p.brand, sum(sale) sales
+from transaction  t 
+	left join users u on t.user_id=u.id
+	left join products p on t.barcode = p.barcode
+where u.CURRENT_DATE IS NOT NULL
+	and t.sale is not null
+	and DATEDIFF(CURRENT_DATE,u.CREATED_DATE)>=183
+group by p.brand
+order by sales desc
+limit 5
+
+#3 What is the percentage of sales in the Health & Wellness category by generation?
+
+select
+  case 
+  	when year(u.BIRTH_DATE) between 1950 and 1970 then "very old"
+  	when year(u.BIRTH_DATE) between 1965 and 1984 then "old"
+  	when year(u.BIRTH_DATE) between 1985 and 1999 then "Millenial"
+  	when year(u.BIRTH_DATE) between 2000 and 2024 then "Gen Z"
+  	else "other" end as generation,
+  sum(t.sale),
+  100* sum(t.sale)/(select sum(t1.sale) from transaction t1 
+                    left join users u1 on t1.user_id=u1.id
+                    left join products p1 on t1.barcode = p1.barcode
+                    where p1.CATEGORY_1='Health & Wellness') sales_percent
+from transaction  t 
+  left join users u on t.user_id=u.id
+  left join products p on t.barcode = p.barcode
+where u.BIRTH_DATE is not null
+  and p.CATEGORY_1='Health & Wellness'
+group by generation
+order by sales_percent desc
+
+
+
+
+OPEN-ENDED QUESTIONS
+
+#1 Who are Fetch’s power users?
+
+Assumption: Assuming fetch power users are the ones who made a purchase in at least 6 months in the year 2023
+
+select user_id,
+  year(PURCHASE_DATE),
+  count(distinct month(PURCHASE_DATE)) as active_months
+from transaction
+where year(PURCHASE_DATE)=2023
+group by user_id, year(PURCHASE_DATE)
+having count(distinct month(PURCHASE_DATE))>=6
+
+#2 Which is the leading brand in the Dips & Salsa category?
+
+Assumption: Assuming the leading brand is the one with highest sales. Here the category 'Dips & Salsa' is present in category2
+
+select p.brand, sum(t.sale) sales
+from transaction  t 
+  left join products p on t.barcode = p.barcode
+where p.CATEGORY_2 = 'Dips & Salsa'
+group by p.brand
+order by sales desc
+limit 1
+ 
+#3 At what percent has Fetch grown year over year?
+Assumption: Assuming Fetch YoY growth is determined by percent change in yearly sales
+
+with sales_per_year as (
+  select year(PURCHASE_DATE) s_year, sum(sale) sales
+  from transaction 
+  group by year(PURCHASE_DATE)
+)
+select select s_year, sales, 
+  LAG(sales,1) OVER (order by s_year) as last_year_sales,
+  100*(sales - (LAG(sales,1) OVER (order by s_year) as last_year_sales))/(LAG(sales,1) OVER (order by s_year) as last_year_sales) as growth_percent
+from sales_per_year
