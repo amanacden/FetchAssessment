@@ -1,0 +1,36 @@
+To: A,B, stakeholders!fetch.com
+Cc: data-analytics-team@fetch.com
+
+Subject: Data Quality Issues and Analysis Insights – Request for Next Steps
+
+Hi <Business Head>/Team,
+
+I have been in-depth analyzing datasets and would liket to share the below findings with you:
+1. Data Quality Issues:
+      a) Missing Data: Significant data is missing across datasets for fields such as Barcode, Brand, Manufacrurer, most specific Category, and several user attributes
+      b) Inappropriate Formatting: For example, barcode is stored as a name rather than a number. Likewise for some other fields
+      c) Data Duplication: Datasets have a few duplicate records of transactions and products, as well as barcode is duplicate for different products in certain instances.
+      d) Unrealistic data: Some users have age of 124 or 2 years, which is likely inaccurate
+      e) Incorrect data: for example, we have data for sales even when nothing  of any q
+      f) Certain transactions have multiple receipts tied to it, which can go up to 12 transactions per receipt
+2. Interesting Trends
+      a) We have 17K unique users who have done at least 1 transaction per receipt, out of which 12K users have done exactly 1 transaction while rest 5K users have done more than 1 transaction.
+      b) There are about 25,000 unique receipts in a dataset of 50,000 rows, so 1 receipt is tied to multiple transactions, those might be refunds/exchanges. 
+      c) Most of the users are in the age group 18 to 50 are are equally distributed within sub age groups
+      d) Femles make 68% of the users
+      e) Number od transactions declined by 20% in last 10 days
+
+Also, would like your feedback on the following items (Request for action):
+    a) Should we escalate to the Internal Audit department to investigate the source of data duplication, maybe a store is scanning sale of certain products more than once, or 
+        maybe it's new staff that needs training who is scanning twice. This data duplication can potentially cause P&L and Balance Sheet to reflect incorrect values
+    b) Should we consider buying more of product catlog data help with accurately imputing the missing values of Brand, Manufacrurer, most specific Category?
+    c) Do you think it is a good idea to escalate upstream to improve the data formatting which can help save the storage cost and improve data reliability/clarity?
+    d) We can send the list of products with duplicate barcodes to the upstream team to check if it's a data quality issues or actually barcodes are misplaced. This will help us avoid 
+        potential situations either over/under changing for certain products or reflecting incorrecting amount in financial statements
+    e) Would it be a good idea to impute manufacturers using brands and vice versa based on similarity of names?
+    f) Outliers 
+
+Please let me know if you any questions or need me to find additional info and happy to get that done promptly. Looking forward to discuss more on the weekly meeting.
+
+Thank you,
+Aman
